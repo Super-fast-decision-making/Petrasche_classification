@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend/
+    command: uvicorn main:app --reload --host=0.0.0.0 --port=8000 --workers=4
+    volumes:
+      - ./:/srv/docker-server/
+    ports:
+      - 8000:8000
+    working_dir: /srv/docker-server/
+    restart: always
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./static/:/static/
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
